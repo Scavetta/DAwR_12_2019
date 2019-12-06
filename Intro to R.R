@@ -280,3 +280,122 @@ length(foo.df) # The number of elements in the list
 
 # access and change names:
 names(foo.df) <- myNames
+foo.df$healthy
+
+# Element 4: Logical Expressions ----
+# Asking and combining TRUE/FALSE questions
+# Relational operators for ASKING questions
+# == equivalency
+# != non-equivalency
+# >, < >=, <=
+# !x the negation of x, where x is a logical vector
+
+# Logical operators for COMBINING questions
+# & AND - must be TRUE in EVERY question
+# | OR - must be TRUE in AT LEAST one question
+# %in% WITHIN - combine many == with |
+
+# you will ALWAYS get a logical vector as a result
+
+# Use filter to extract rows that match TRUE
+
+# For logical data
+# All healthy observations
+foo.df %>%
+  filter(healthy)
+
+# All unhealthy observations
+foo.df %>% 
+  filter(!healthy)
+
+# For numeric data
+# below quantity of 10
+foo.df %>% 
+  filter(quantity < 10)
+
+# What actually happened?
+foo.df$quantity < 10
+
+# between quantity 10 and 20 (i.e. middle)
+foo.df %>% 
+  filter(quantity > 10 & quantity < 20)
+# alternatively...
+foo.df %>% 
+  filter(quantity > 10, quantity < 20)
+
+# Meaningless
+foo.df %>% 
+  filter(quantity > 10 | quantity < 20)
+
+# beyond quantity 10 and 20 (i.e. the tails)
+foo.df %>% 
+  filter(quantity < 10 | quantity > 20)
+
+# impossible
+foo.df %>% 
+  filter(quantity < 10 & quantity > 20)
+
+# For character data
+# NO pattern matching
+# All heart samples
+foo.df %>% 
+  filter(tissue == "Heart")
+
+# Only heart and liver samples
+# ok, but inefficient
+foo.df %>% 
+  filter(tissue == "Heart" | tissue == "Liver")
+
+# Using a vector
+# NEVER do this!
+foo.df %>% 
+  filter(tissue == c("Heart", "Liver"))
+foo.df %>% 
+  filter(tissue == c("Liver", "Heart"))
+# Because of vector recycling!!!
+
+# The correct way:
+foo.df %>% 
+  filter(tissue %in% c("Heart", "Liver"))
+foo.df %>% 
+  filter(tissue %in% c("Liver", "Heart"))
+
+# tail ends and healthy:
+foo.df %>% 
+  filter((quantity < 10 | quantity > 20), healthy == TRUE)
+
+# Element 5: Indexing ----
+# Finding information by position using []
+
+# Vectors - 1-dimensional
+foo1
+foo1[6] # the 6th value
+foo1[p] # the pth value
+foo1[length(foo1)] # the last value
+foo1[3:p] # the 3rd to the pth value
+foo1[p:length(foo1)] # the pth to the last value
+
+# We can use any combination of integers, or
+# objects or functions that equate to integers
+
+# BUT... The exciting part is using LOGICAL VECTORS!
+# i.e. the result of functions or logical expressions
+
+foo1[foo1 < 50] # all values below 50
+
+# data frames - 2-dimensional
+# specify [ <rows> , <columns> ]
+foo.df[3,] # All columns, 3rd row
+foo.df[,3] # All rows, 3rd column
+
+foo.df[3:p, 3 ] # 3rd to the pth row, only quantity
+foo.df[3:p, "quantity"] # 3rd to the pth row, only quantity
+
+foo.df[foo.df$quantity < 10, "tissue"] # tissues with quantity below 10
+
+# Note that this is the same as:
+foo.df %>% 
+  filter(quantity < 10) %>% 
+  select(tissue)
+
+# Element 6: Factor Variables
